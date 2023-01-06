@@ -2,7 +2,7 @@
 
 path=$(readlink -f "${BASH_SOURCE:-$0}")
 DIR_PATH=$(dirname "$path")
-DIST_PATH="$DIR_PATH"/dist
+DIST_PATH="$DIR_PATH"/hard-notes
 SRC_PATH="$DIR_PATH"/src
 WEB_PATH="$DIR_PATH/web"
 BASE_HTML_TEMPLATE="$WEB_PATH/base.template.html"
@@ -54,7 +54,7 @@ build() {
       html=""
       for filename in $list
       do
-        html+="<a href=""$filename"" class=""list-group-item list-group-item-action""\>${filename%.html}</a>"
+        html+="<a href=\"$filename\" class=\"list-group-item list-group-item-action\">${filename%.html}</a>"
       done
       echo "${list_html/CONTENT/$html}" > "$DIST_PATH/$type/index.html"
   done
@@ -93,7 +93,7 @@ clean() {
 
 run() {
   port=${1:-4000}
-  python3 -m http.server "$port" -d "$DIST_PATH"
+  python3 -m http.server "$port"
 }
 
 deploy() {
