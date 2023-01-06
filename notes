@@ -96,6 +96,10 @@ run() {
   python3 -m http.server "$port" -d "$DIST_PATH"
 }
 
+deploy() {
+  git subtree push --prefix dist origin gh-pages
+}
+
 usage() {
   printf "\
 Usage: ./notes [command]
@@ -103,6 +107,7 @@ Commands:
  - build
  - clean
  - run [port]
+ - deploy
  - new
     - note [note name]
     - task [task name]
@@ -115,5 +120,6 @@ case $1 in
   "clean") clean;;
   "new") new "${@: 2}";;
   "run") run "$2";;
+  "deploy") deploy;;
   *) usage;;
 esac
