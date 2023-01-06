@@ -82,12 +82,18 @@ clean() {
   rm -rf "${DIST_PATH}"
 }
 
+run() {
+  port=${1:-4000}
+  python3 -m http.server "$port" -d "$DIST_PATH"
+}
+
 usage() {
   printf "\
 Usage: ./notes [command]
 Commands:
  - build
  - clean
+ - run [port]
  - new
     - note [note name]
     - task [task name]
@@ -99,5 +105,6 @@ case $1 in
   "build") build;;
   "clean") clean;;
   "new") new "${@: 2}";;
+  "run") run "$2";;
   *) usage;;
 esac
