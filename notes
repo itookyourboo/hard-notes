@@ -1,0 +1,103 @@
+#!/bin/bash
+
+path=$(readlink -f "${BASH_SOURCE:-$0}")
+DIR_PATH=$(dirname "$path")
+DIST_PATH="$DIR_PATH"/dist
+SRC_PATH="$DIR_PATH"/src
+WEB_PATH="$DIR_PATH/web"
+INDEX_HTML_TEMPLATE="$WEB_PATH/index.template.html"
+TYPES="notes tasks questions"
+
+PANDOC_ARGS="--highlight-style=pygments"
+
+mkdirp() { mkdir -p "$(dirname "$1")" || return; }
+
+build() {
+  mkdir -p "$DIST_PATH"
+  SRC=$(find "$SRC_PATH" -name '*.md' -type f)
+
+  for md_file in $SRC
+  do
+    folder=$(dirname "$md_file")
+    type=$(basename "$folder")
+    file=${md_file%.md}
+
+    html_file="${file/$SRC_PATH/$DIST_PATH}.html"
+    mkdirp "$html_file"
+
+    if [ ! -f "$md_file" ] || [ "$md_file" -nt "$html_file" ]; then
+      echo "Building ${html_file/${DIST_PATH}\//}"
+
+      CONTENT="$(pandoc "$md_file" -t html ${PANDOC_ARGS})"
+
+      HTML=$(cat "$WEB_PATH/$type.template.html")
+      HTML=${HTML/CONTENT/$CONTENT}
+      echo -e "$HTML" > "$html_file"
+    fi
+  done
+
+  cp -f "$WEB_PATH/pygments.css" "$DIST_PATH/"
+
+  INDEX_HTML=$(cat "$INDEX_HTML_TEMPLATE")
+  for type in $TYPES
+  do
+      list=$(ls "$DIST_PATH/$type/")
+      html=""
+      for filename in $list
+      do
+        html+="<li><a href="$type/$filename">${filename%.html}</a></li>"
+      done
+      INDEX_HTML=${INDEX_HTML/$type/$html}
+  done
+
+  echo -e "$INDEX_HTML" > "$DIST_PATH/index.html"
+}
+
+new() {
+  slugify() {
+    echo "$1" | awk '{print tolower($0)}'| sed -r s/[^a-zа-я0-9]+/_/g
+  }
+
+  NAME="${*: 2}"
+      TEMPLATE="\
+---\n\
+title: $NAME\n\
+keywords: \n\
+---\n\
+# $NAME\n"
+  clear_name=$(slugify "$NAME")
+  md_file="$SRC_PATH/$1s/$clear_name.md"
+  mkdirp "$md_file"
+  echo -e "$TEMPLATE" > "$md_file"
+
+  case $1 in
+    "note") ;;
+    "task") ;;
+    "question") ;;
+    *) usage;;
+  esac
+}
+
+clean() {
+  rm -rf "${DIST_PATH}"
+}
+
+usage() {
+  printf "\
+Usage: ./notes [command]
+Commands:
+ - build
+ - clean
+ - new
+    - note [note name]
+    - task [task name]
+    - question [question]
+"
+}
+
+case $1 in
+  "build") build;;
+  "clean") clean;;
+  "new") new "${@: 2}";;
+  *) usage;;
+esac

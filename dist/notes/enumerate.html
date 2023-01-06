@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Notes</title>
+    <link rel="stylesheet" href="../pygments.css">
+</head>
+<body>
+    <div class="content">
+        <h1 id="enumerate">enumerate</h1>
+<h2 id="было">Было</h2>
+<div class="sourceCode" id="cb1"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true"></a>array <span class="op">=</span> [<span class="dv">2</span>, <span class="dv">4</span>, <span class="dv">6</span>, <span class="dv">8</span>]</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true"></a><span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="bu">len</span>(array)):</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true"></a>    <span class="bu">print</span>(i, array[i])</span></code></pre></div>
+<pre><code>0 2
+1 4
+2 6
+3 8</code></pre>
+<h2 id="стало">Стало</h2>
+<div class="sourceCode" id="cb3"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true"></a>array <span class="op">=</span> [<span class="dv">2</span>, <span class="dv">4</span>, <span class="dv">6</span>, <span class="dv">8</span>]</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true"></a><span class="cf">for</span> i, element <span class="kw">in</span> <span class="bu">enumerate</span>(array):</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true"></a>    <span class="bu">print</span>(i, element)</span></code></pre></div>
+<pre><code>0 2
+1 4
+2 6
+3 8</code></pre>
+<p>Также можно указать стартовый индекс:</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true"></a>array <span class="op">=</span> [<span class="dv">2</span>, <span class="dv">4</span>, <span class="dv">6</span>, <span class="dv">8</span>]</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true"></a><span class="cf">for</span> i, element <span class="kw">in</span> <span class="bu">enumerate</span>(array, <span class="dv">5</span>):</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true"></a>    <span class="bu">print</span>(i, element)</span></code></pre></div>
+<pre><code>5 2
+6 4
+7 6
+8 8</code></pre>
+    </div>
+</body>
+</html>
