@@ -1,6 +1,6 @@
 ---
 title: Порядок init, new и call
-keywords: 
+keywords: python, ООП
 ---
 
 # Порядок init, new и call
