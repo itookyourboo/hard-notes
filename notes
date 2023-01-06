@@ -1,8 +1,11 @@
 #!/bin/bash
 
 path=$(readlink -f "${BASH_SOURCE:-$0}")
+
+APP_NAME=hard-notes
+
 DIR_PATH=$(dirname "$path")
-DIST_PATH="$DIR_PATH"/hard-notes
+DIST_PATH="$DIR_PATH/$APP_NAME"
 SRC_PATH="$DIR_PATH"/src
 WEB_PATH="$DIR_PATH/web"
 BASE_HTML_TEMPLATE="$WEB_PATH/base.template.html"
@@ -93,6 +96,7 @@ clean() {
 
 run() {
   port=${1:-4000}
+  (sleep 1; python3 -m webbrowser "0.0.0.0:$port/$APP_NAME")&
   python3 -m http.server "$port"
 }
 
