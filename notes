@@ -5,16 +5,26 @@ DIR_PATH=$(dirname "$path")
 DIST_PATH="$DIR_PATH"/dist
 SRC_PATH="$DIR_PATH"/src
 WEB_PATH="$DIR_PATH/web"
+BASE_HTML_TEMPLATE="$WEB_PATH/base.template.html"
 INDEX_HTML_TEMPLATE="$WEB_PATH/index.template.html"
+LIST_HTML_TEMPLATE="$WEB_PATH/list.template.html"
 TYPES="notes tasks questions"
 
 PANDOC_ARGS="--highlight-style=pygments"
 
 mkdirp() { mkdir -p "$(dirname "$1")" || return; }
 
+inject() {
+  html=$(cat "$1")
+  html=${html/CONTENT/$2}
+  echo "$html";
+}
+
 build() {
   mkdir -p "$DIST_PATH"
   SRC=$(find "$SRC_PATH" -name '*.md' -type f)
+
+  BASE_HTML=$(cat "$BASE_HTML_TEMPLATE")
 
   for md_file in $SRC
   do
@@ -29,28 +39,27 @@ build() {
       echo "Building ${html_file/${DIST_PATH}\//}"
 
       CONTENT="$(pandoc "$md_file" -t html ${PANDOC_ARGS})"
-
-      HTML=$(cat "$WEB_PATH/$type.template.html")
-      HTML=${HTML/CONTENT/$CONTENT}
+      HTML=${BASE_HTML/CONTENT/$CONTENT}
       echo -e "$HTML" > "$html_file"
     fi
   done
 
   cp -f "$WEB_PATH/pygments.css" "$DIST_PATH/"
 
-  INDEX_HTML=$(cat "$INDEX_HTML_TEMPLATE")
+  list_html="$(inject "$BASE_HTML_TEMPLATE" "$(cat "$LIST_HTML_TEMPLATE")")"
+
   for type in $TYPES
   do
       list=$(ls "$DIST_PATH/$type/")
       html=""
       for filename in $list
       do
-        html+="<li><a href="$type/$filename">${filename%.html}</a></li>"
+        html+="<a href=""$filename"" class=""list-group-item list-group-item-action""\>${filename%.html}</a>"
       done
-      INDEX_HTML=${INDEX_HTML/$type/$html}
+      echo "${list_html/CONTENT/$html}" > "$DIST_PATH/$type/index.html"
   done
 
-  echo -e "$INDEX_HTML" > "$DIST_PATH/index.html"
+  inject "$BASE_HTML_TEMPLATE" "$(cat "$INDEX_HTML_TEMPLATE")" > "$DIST_PATH/index.html"
 }
 
 new() {
